@@ -1,9 +1,11 @@
 package io.baxter.accounts.data.models;
 
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Getter
 @Table(name = "phone_numbers")
 public class PhoneNumberDataModel {
     @Id
@@ -20,8 +22,4 @@ public class PhoneNumberDataModel {
         this.number = number;
         this.countrycode = countrycode;
     }
-
-    public Integer getId() { return this.id; }
-    public String getNumber() { return this.number; }
-    public String getCountrycode() { return this.countrycode; }
 }

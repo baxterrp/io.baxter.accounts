@@ -1,9 +1,11 @@
 package io.baxter.accounts.data.models;
 
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Getter
 @Table(name = "accounts")
 public class AccountDataModel {
     @Id
@@ -25,8 +27,4 @@ public class AccountDataModel {
         this.phoneId = phoneId;
     }
 
-    public Integer getId() { return this.id; }
-    public String getEmail() { return this.email; }
-    public Integer getAddressId() { return this.addressId; }
-    public Integer getPhoneId() { return this.phoneId; }
 }

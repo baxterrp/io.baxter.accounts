@@ -4,7 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 
+@Getter
 public class RegistrationRequest {
     @Email(message = "invalid email format")
     @Size(max = 100, message = "email cannot exceed 100 characters")
@@ -20,7 +22,4 @@ public class RegistrationRequest {
         this.email = email;
         this.password = password;
     }
-
-    public String getEmail(){ return this.email; }
-    public String getPassword(){ return this.password; }
 }

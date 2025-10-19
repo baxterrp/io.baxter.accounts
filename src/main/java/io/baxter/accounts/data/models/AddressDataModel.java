@@ -1,9 +1,11 @@
 package io.baxter.accounts.data.models;
 
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+@Getter
 @Table(name = "addresses")
 public class AddressDataModel {
     @Id
@@ -32,11 +34,4 @@ public class AddressDataModel {
         this.zip = zip;
         this.city = country;
     }
-
-    public Integer getId() { return this.id; }
-    public String getStreet() { return this.street; }
-    public String getCity() { return this.city; }
-    public String getState() { return this.state; }
-    public String getZip() { return this.zip; }
-    public String getCountry() { return this.country; }
 }

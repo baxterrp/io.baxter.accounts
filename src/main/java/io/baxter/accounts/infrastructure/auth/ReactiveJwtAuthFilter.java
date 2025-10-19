@@ -23,14 +23,11 @@ import java.util.List;
 @Component
 public class ReactiveJwtAuthFilter implements WebFilter {
     private final String secret;
-    private final String ROLES = "roles";
 
     public ReactiveJwtAuthFilter(@Value("${jwt.secret}") String secret){ this.secret = secret; }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String path = exchange.getRequest().getURI().getPath();
-
         // if no auth header is provided as expected by 'Bearer token' return 401
         List<String> authHeaders = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
         if (authHeaders == null || authHeaders.isEmpty()) {
@@ -38,7 +35,7 @@ public class ReactiveJwtAuthFilter implements WebFilter {
             return exchange.getResponse().setComplete();
         }
 
-        String header = authHeaders.get(0);
+        String header = authHeaders.getFirst();
         if (!header.startsWith("Bearer ")) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
@@ -62,7 +59,7 @@ public class ReactiveJwtAuthFilter implements WebFilter {
             String username = claims.getSubject();
 
             // roles should be provided in token
-            List<String> roles = claims.get(ROLES, List.class);
+            List<String> roles = claims.get("roles", List.class);
 
             // map to simple granted authorities
             List<SimpleGrantedAuthority> authorities = roles != null ?
