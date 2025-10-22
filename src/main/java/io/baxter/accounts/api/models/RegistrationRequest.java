@@ -4,9 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegistrationRequest {
     @Email(message = "invalid email format")
     @Size(max = 100, message = "email cannot exceed 100 characters")
@@ -18,8 +22,6 @@ public class RegistrationRequest {
             message = "invalid password (at least 8 characters, 1 upper case, 1 lower case, 1 special character)")
     String password;
 
-    public RegistrationRequest(String email, String password){
-        this.email = email;
-        this.password = password;
-    }
+    Phone phone;
+    Address address;
 }

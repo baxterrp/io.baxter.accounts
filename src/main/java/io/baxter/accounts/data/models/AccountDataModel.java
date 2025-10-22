@@ -1,30 +1,26 @@
 package io.baxter.accounts.data.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "accounts")
 public class AccountDataModel {
     @Id
-    public Integer id;
+    private Integer id;
 
     @Column("email")
-    public String email;
+    private String email;
 
     @Column("address_id")
-    public Integer addressId;
+    private Integer addressId;
 
     @Column("phone_id")
-    public Integer phoneId;
-
-    public AccountDataModel(Integer id, String email, Integer addressId, Integer phoneId){
-        this.id = id;
-        this.email = email;
-        this.addressId = addressId;
-        this.phoneId = phoneId;
-    }
-
+    private Integer phoneId;
 }

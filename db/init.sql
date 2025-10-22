@@ -13,13 +13,13 @@ CREATE TABLE IF NOT EXISTS `phone_numbers` (
     `number` VARCHAR(255) NOT NULL,
     `countrycode` VARCHAR(3) NOT NULL,
     PRIMARY KEY (`id`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
-  `address_id` int NOT NULL,
-  `phone_id` INT NOT NULL
+  `address_id` int NULL,
+  `phone_id` INT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`address_id`) REFERENCES addresses(`id`),
   FOREIGN KEY (`phone_id`) REFERENCES phone_numbers(`id`)

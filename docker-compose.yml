@@ -30,6 +30,7 @@ services:
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
     ports:
       - ${API_PORTS}
+      - "5005:5005"
     restart: unless-stopped
 
 volumes:

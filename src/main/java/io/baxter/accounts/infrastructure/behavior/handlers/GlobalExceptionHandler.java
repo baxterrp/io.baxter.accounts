@@ -67,6 +67,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
 
                 // introduce logging and store the message
-                .body(ErrorResponse.create(exception, HttpStatus.INTERNAL_SERVER_ERROR, "Uh oh.. something went wrong")));
+                .body(ErrorResponse.create(exception, HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage())));
     }
 }
