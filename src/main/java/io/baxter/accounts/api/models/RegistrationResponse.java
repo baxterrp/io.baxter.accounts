@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LoginResponse {
-    String token;
+public class RegistrationResponse {
+    Integer id;
+    String email;
 }

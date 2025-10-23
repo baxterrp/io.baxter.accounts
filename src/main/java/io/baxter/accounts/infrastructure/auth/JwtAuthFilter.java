@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ReactiveJwtAuthFilter implements WebFilter {
+public class JwtAuthFilter implements WebFilter {
     private final String secret;
 
-    public ReactiveJwtAuthFilter(@Value("${jwt.secret}") String secret){ this.secret = secret; }
+    public JwtAuthFilter(@Value("${jwt.secret}") String secret){ this.secret = secret; }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {

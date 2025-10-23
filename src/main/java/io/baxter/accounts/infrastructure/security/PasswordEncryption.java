@@ -1,4 +1,4 @@
-package io.baxter.accounts.infrastructure.auth;
+package io.baxter.accounts.infrastructure.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,12 +1,9 @@
 package io.baxter.accounts.api.services;
 
 import io.baxter.accounts.api.models.*;
-import io.baxter.accounts.data.models.AccountDataModel;
-import io.baxter.accounts.data.models.AddressDataModel;
-import io.baxter.accounts.data.models.PhoneNumberDataModel;
-import io.baxter.accounts.data.repository.AccountRepository;
-import io.baxter.accounts.data.repository.AddressRepository;
-import io.baxter.accounts.data.repository.PhoneNumberRepository;
+import io.baxter.accounts.data.models.*;
+import io.baxter.accounts.data.repository.*;
+import io.baxter.accounts.infrastructure.constants.Roles;
 import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,21 +20,19 @@ public class AccountServiceImplementation implements AccountService{
     private final AddressRepository addressRepository;
     private final PhoneNumberRepository phoneNumberRepository;
 
-    private final String ROLE_USER = "ROLE_USER";
-
     @Override
     public Mono<LoginResponse> login(LoginRequest loginRequest) {
-        return null;
+        return authServiceHttpClient.login(new AuthLoginRequest(loginRequest.getEmail(), loginRequest.getPassword()));
     }
 
     @Override
-    public Mono<AccountDataModel> register(RegistrationRequest registrationRequest) {
+    public Mono<RegistrationResponse> register(RegistrationRequest registrationRequest) {
 
         // build DTO's
         AuthServiceRegistrationModel authRequest = new AuthServiceRegistrationModel(
                 registrationRequest.getEmail(),
                 registrationRequest.getPassword(),
-                List.of(ROLE_USER)
+                List.of(Roles.ROLE_USER)
         );
 
         Address address = registrationRequest.getAddress();
@@ -62,7 +57,7 @@ public class AccountServiceImplementation implements AccountService{
                 .then(Mono.defer(() -> saveAccountWithAddressAndPhone(addressRequest, phoneRequest, registrationRequest.getEmail())));
     }
 
-    private Mono<AccountDataModel> saveAccountWithAddressAndPhone(
+    private Mono<RegistrationResponse> saveAccountWithAddressAndPhone(
             AddressDataModel addressRequest,
             PhoneNumberDataModel phoneRequest,
             String email
@@ -81,11 +76,17 @@ public class AccountServiceImplementation implements AccountService{
                     AccountDataModel account = new AccountDataModel(
                             null,
                             email,
-                            savedAddress != null ? savedAddress.getId() : null,
-                            savedPhone != null ? savedPhone.getId() : null
+                            savedAddress.getId(),
+                            savedPhone.getId()
                     );
 
                     return accountRepository.save(account);
-                });
+                })
+                .flatMap(this::accountToRegistrationResponse);
+    }
+
+    private Mono<RegistrationResponse> accountToRegistrationResponse(AccountDataModel accountDataModel){
+        return Mono.just(new RegistrationResponse(accountDataModel.getId(), accountDataModel.getEmail()));
     }
 }
+
