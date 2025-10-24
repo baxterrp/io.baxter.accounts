@@ -127,11 +127,7 @@ public class AccountServiceImplementation implements AccountService{
 
                     return accountRepository.save(account);
                 })
-                .flatMap(this::accountToRegistrationResponse);
-    }
-
-    private Mono<RegistrationResponse> accountToRegistrationResponse(AccountDataModel accountDataModel){
-        return Mono.just(new RegistrationResponse(accountDataModel.getId(), accountDataModel.getEmail()));
+                .map(account -> new RegistrationResponse(account.getId(), account.getEmail()));
     }
 }
 
