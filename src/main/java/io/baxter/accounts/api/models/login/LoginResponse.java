@@ -1,4 +1,4 @@
-package io.baxter.accounts.api.models;
+package io.baxter.accounts.api.models.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package io.baxter.accounts.api.services;
 
-import io.baxter.accounts.api.models.AuthLoginRequest;
-import io.baxter.accounts.api.models.LoginResponse;
+import io.baxter.accounts.api.models.login.AuthLoginRequest;
+import io.baxter.accounts.api.models.login.LoginResponse;
 import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationModel;
 import reactor.core.publisher.Mono;
 

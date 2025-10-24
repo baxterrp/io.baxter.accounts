@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Phone {
+public class PhoneModel {
     private Integer id;
     private String number;
     private String countrycode;

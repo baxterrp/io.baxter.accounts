@@ -1,8 +1,15 @@
 package io.baxter.accounts.api.services;
 
 import io.baxter.accounts.api.models.*;
+import io.baxter.accounts.api.models.login.AuthLoginRequest;
+import io.baxter.accounts.api.models.login.LoginRequest;
+import io.baxter.accounts.api.models.login.LoginResponse;
+import io.baxter.accounts.api.models.register.RegistrationRequest;
+import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.data.models.*;
 import io.baxter.accounts.data.repository.*;
+import io.baxter.accounts.infrastructure.behavior.exceptions.InvalidLoginException;
+import io.baxter.accounts.infrastructure.behavior.exceptions.ResourceNotFoundException;
 import io.baxter.accounts.infrastructure.constants.Roles;
 import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationModel;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +17,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +29,50 @@ public class AccountServiceImplementation implements AccountService{
     private final PhoneNumberRepository phoneNumberRepository;
 
     @Override
+    public Mono<AccountModel> getAccountById(Integer id) {
+        return accountRepository.findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("account", id.toString())))
+                .flatMap(accountDataModel -> {
+                    Mono<Optional<PhoneModel>> phone = Mono.justOrEmpty(accountDataModel.getPhoneId())
+                            .flatMap(phoneNumberRepository::findById)
+                            .map(phoneDataModel -> new PhoneModel(
+                                    phoneDataModel.getId(),
+                                    phoneDataModel.getNumber(),
+                                    phoneDataModel.getCountrycode()))
+                            .map(Optional::of)
+                            .defaultIfEmpty(Optional.empty());
+
+                    Mono<Optional<AddressModel>> address = Mono.justOrEmpty(accountDataModel.getAddressId())
+                            .flatMap(addressRepository::findById)
+                            .map(addressDataModel -> new AddressModel(
+                                    addressDataModel.getId(),
+                                    addressDataModel.getStreet(),
+                                    addressDataModel.getCity(),
+                                    addressDataModel.getState(),
+                                    addressDataModel.getZip(),
+                                    addressDataModel.getCountry()))
+                            .map(Optional::of)
+                            .defaultIfEmpty(Optional.empty());
+
+                    return Mono.zip(phone, address).map(tuple ->
+                            new AccountModel(
+                               accountDataModel.getId(),
+                               accountDataModel.getEmail(),
+                               tuple.getT1().orElse(null),
+                               tuple.getT2().orElse(null)
+                       ));
+                    });
+    }
+
+    @Override
     public Mono<LoginResponse> login(LoginRequest loginRequest) {
-        return authServiceHttpClient.login(new AuthLoginRequest(loginRequest.getEmail(), loginRequest.getPassword()));
+        return accountRepository.findByEmail(loginRequest.getEmail())
+            .switchIfEmpty(Mono.error(InvalidLoginException::new))
+            .flatMap(account -> authServiceHttpClient.login(new AuthLoginRequest(account.getEmail(), loginRequest.getPassword())));
     }
 
     @Override
     public Mono<RegistrationResponse> register(RegistrationRequest registrationRequest) {
-
         // build DTO's
         AuthServiceRegistrationModel authRequest = new AuthServiceRegistrationModel(
                 registrationRequest.getEmail(),
@@ -35,7 +80,7 @@ public class AccountServiceImplementation implements AccountService{
                 List.of(Roles.ROLE_USER)
         );
 
-        Address address = registrationRequest.getAddress();
+        AddressModel address = registrationRequest.getAddress();
         AddressDataModel addressRequest = address != null ? new AddressDataModel(
                 null,
                 address.getStreet(),
@@ -45,7 +90,7 @@ public class AccountServiceImplementation implements AccountService{
                 address.getCountry()
         ) : null;
 
-        Phone phone = registrationRequest.getPhone();
+        PhoneModel phone = registrationRequest.getPhone();
         PhoneNumberDataModel phoneRequest = phone != null ? new PhoneNumberDataModel(
                 null,
                 phone.getNumber(),

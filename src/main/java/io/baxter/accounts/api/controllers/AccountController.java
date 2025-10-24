@@ -1,9 +1,10 @@
 package io.baxter.accounts.api.controllers;
 
-import io.baxter.accounts.api.models.LoginRequest;
-import io.baxter.accounts.api.models.LoginResponse;
-import io.baxter.accounts.api.models.RegistrationRequest;
-import io.baxter.accounts.api.models.RegistrationResponse;
+import io.baxter.accounts.api.models.*;
+import io.baxter.accounts.api.models.login.LoginRequest;
+import io.baxter.accounts.api.models.login.LoginResponse;
+import io.baxter.accounts.api.models.register.RegistrationRequest;
+import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.api.services.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -31,8 +33,17 @@ public class AccountController {
                 .map(account -> ResponseEntity.created(URI.create("/login")).body(account));
     }
 
-    @PatchMapping()
-    public Mono<ResponseEntity<String>> update(){
-        return Mono.just(ResponseEntity.ok("test"));
+    @GetMapping("{id}")
+    public Mono<ResponseEntity<AccountModel>> getAccount(@PathVariable Integer id){
+        return accountService.getAccountById(id).map(ResponseEntity::ok);
+    }
+
+    @PatchMapping("{id}")
+    public Mono<ResponseEntity<AccountModel>> update(@PathVariable Integer id, @RequestBody UpdateAccountRequest updateAccountRequest){
+        return Mono.just(ResponseEntity.ok(new AccountModel(
+                id,
+                "test@gmail.com",
+                new PhoneModel(id, "1234567890", "1"),
+                new AddressModel(id, "123 Fake St.", "ypsilanti", "MI", "48198", "usa"))));
     }
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AuthLoginRequest {
-    String userName;
-    String password;
+public class UpdateAccountRequest {
+    PhoneModel phone;
+    AddressModel address;
 }

@@ -5,7 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RegistrationResponse {
+public class AccountModel {
     Integer id;
     String email;
+    PhoneModel phone;
+    AddressModel address;
 }

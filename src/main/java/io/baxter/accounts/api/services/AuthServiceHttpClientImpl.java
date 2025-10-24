@@ -1,7 +1,7 @@
 package io.baxter.accounts.api.services;
 
-import io.baxter.accounts.api.models.AuthLoginRequest;
-import io.baxter.accounts.api.models.LoginResponse;
+import io.baxter.accounts.api.models.login.AuthLoginRequest;
+import io.baxter.accounts.api.models.login.LoginResponse;
 import io.baxter.accounts.infrastructure.behavior.exceptions.InvalidLoginException;
 import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationModel;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,11 @@ public class AuthServiceHttpClientImpl implements AuthServiceHttpClient{
 
     @Override
     public Mono<LoginResponse> login(AuthLoginRequest loginRequest) {
+        String loginUri = "/api/auth/login";
+
         return authServiceWebClient
                 .post()
-                .uri("/api/auth/login")
+                .uri(loginUri)
                 .bodyValue(loginRequest)
                 .retrieve()
                 .onStatus(status -> !status.is2xxSuccessful(), clientResponse -> Mono.error(new InvalidLoginException()))
@@ -27,9 +29,11 @@ public class AuthServiceHttpClientImpl implements AuthServiceHttpClient{
 
     @Override
     public Mono<Void> register(AuthServiceRegistrationModel request) {
+        String registerUri = "/api/auth/register";
+
         return authServiceWebClient
                 .post()
-                .uri("/api/auth/register")
+                .uri(registerUri)
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(status -> !status.is2xxSuccessful(), clientResponse ->

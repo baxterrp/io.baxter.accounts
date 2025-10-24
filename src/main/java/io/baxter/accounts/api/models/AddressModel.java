@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Address {
+public class AddressModel {
     private Integer id;
     private String street;
     private String city;
