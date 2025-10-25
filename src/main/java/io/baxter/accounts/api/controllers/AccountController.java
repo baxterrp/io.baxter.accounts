@@ -39,10 +39,6 @@ public class AccountController {
 
     @PatchMapping("{id}")
     public Mono<ResponseEntity<AccountModel>> update(@PathVariable Integer id, @RequestBody UpdateAccountRequest updateAccountRequest){
-        return Mono.just(ResponseEntity.ok(new AccountModel(
-                id,
-                "test@gmail.com",
-                new PhoneModel(id, "1234567890", "1"),
-                new AddressModel(id, "123 Fake St.", "ypsilanti", "MI", "48198", "usa"))));
+        return accountService.updateAccount(updateAccountRequest, id).map(ResponseEntity::ok);
     }
 }

@@ -29,6 +29,66 @@ public class AccountServiceImplementation implements AccountService{
     private final PhoneNumberRepository phoneNumberRepository;
 
     @Override
+    public Mono<AccountModel> updateAccount(UpdateAccountRequest updateAccountRequest, Integer id) {
+
+        return accountRepository.findById(id)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("account", id.toString())))
+                .flatMap(foundAccount -> {
+                    Mono<Optional<PhoneNumberDataModel>> phoneUpdate = Mono.justOrEmpty(updateAccountRequest.getPhone())
+                            .flatMap(phone -> {
+                                if (phone.getId() != null) {
+                                    PhoneNumberDataModel phoneDataModel = new PhoneNumberDataModel(
+                                            phone.getId(),
+                                            phone.getNumber(),
+                                            phone.getCountrycode()
+                                    );
+
+                                    return phoneNumberRepository.save(phoneDataModel);
+                                }
+                                return Mono.empty();
+                            })
+                            .map(Optional::of)
+                            .defaultIfEmpty(Optional.empty());
+
+                    Mono<Optional<AddressDataModel>> addressUpdate = Mono.justOrEmpty(updateAccountRequest.getAddress())
+                            .flatMap(address -> {
+                                if (address.getId() != null) {
+                                    AddressDataModel addressDataModel = new AddressDataModel(
+                                            address.getId(),
+                                            address.getStreet(),
+                                            address.getCity(),
+                                            address.getState(),
+                                            address.getZip(),
+                                            address.getCountry()
+                                    );
+
+                                    return addressRepository.save(addressDataModel);
+                                }
+
+                                return Mono.empty();
+                            })
+                            .map(Optional::of)
+                            .defaultIfEmpty(Optional.empty());
+
+                    return Mono.zip(phoneUpdate, addressUpdate)
+                            .flatMap(tuple -> {
+                                PhoneNumberDataModel phone = tuple.getT1().orElse(null);
+                                AddressDataModel address = tuple.getT2().orElse(null);
+
+                                AccountDataModel updatedAccount = new AccountDataModel(
+                                        id,
+                                        foundAccount.getEmail(),
+                                        phone != null ? phone.getId() : foundAccount.getPhoneId(),
+                                        address != null ? address.getId() : foundAccount.getAddressId()
+                                );
+
+                                return accountRepository.save(updatedAccount);
+                            })
+                            .flatMap(saved -> getAccountById(id));
+                });
+    }
+
+    @Override
     public Mono<AccountModel> getAccountById(Integer id) {
         return accountRepository.findById(id)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("account", id.toString())))
