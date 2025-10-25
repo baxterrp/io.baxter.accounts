@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AccountServiceImplementation implements AccountService{
+public class AccountServiceImpl implements AccountService{
 
     private final AuthServiceHttpClient authServiceHttpClient;
     private final AccountRepository accountRepository;
@@ -45,6 +45,7 @@ public class AccountServiceImplementation implements AccountService{
 
                                     return phoneNumberRepository.save(phoneDataModel);
                                 }
+
                                 return Mono.empty();
                             })
                             .map(Optional::of)
@@ -167,27 +168,31 @@ public class AccountServiceImplementation implements AccountService{
             PhoneNumberDataModel phoneRequest,
             String email
     ) {
-        // kick off save phone and address in parallel
-        Mono<AddressDataModel> addressMono = addressRepository.save(addressRequest);
-        Mono<PhoneNumberDataModel> phoneMono = phoneNumberRepository.save(phoneRequest);
+        Mono<Optional<AddressDataModel>> addressMono =
+                addressRequest != null
+                        ? addressRepository.save(addressRequest).map(Optional::of)
+                        : Mono.just(Optional.empty());
 
-        // "zip" the responses into a tuple and map to access id's
+        Mono<Optional<PhoneNumberDataModel>> phoneMono =
+                phoneRequest != null
+                        ? phoneNumberRepository.save(phoneRequest).map(Optional::of)
+                        : Mono.just(Optional.empty());
+
         return Mono.zip(addressMono, phoneMono)
                 .flatMap(tuple -> {
-                    AddressDataModel savedAddress = tuple.getT1();
-                    PhoneNumberDataModel savedPhone = tuple.getT2();
+                    Optional<AddressDataModel> address = tuple.getT1();
+                    Optional<PhoneNumberDataModel> phone = tuple.getT2();
 
-                    // save account with address and phone ids if applicable
                     AccountDataModel account = new AccountDataModel(
                             null,
-                            email,
-                            savedAddress.getId(),
-                            savedPhone.getId()
+                            email.toLowerCase(),
+                            phone.map(PhoneNumberDataModel::getId).orElse(null),
+                            address.map(AddressDataModel::getId).orElse(null)
                     );
 
                     return accountRepository.save(account);
                 })
-                .map(account -> new RegistrationResponse(account.getId(), account.getEmail()));
+                .map(saved -> new RegistrationResponse(saved.getId(), saved.getEmail()));
     }
 }
 
