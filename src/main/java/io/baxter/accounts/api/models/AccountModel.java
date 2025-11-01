@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AccountModel {
     Integer id;
+    Integer userId;
     String email;
     PhoneModel phone;
     AddressModel address;

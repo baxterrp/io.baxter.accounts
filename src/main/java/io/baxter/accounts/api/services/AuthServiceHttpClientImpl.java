@@ -4,6 +4,7 @@ import io.baxter.accounts.api.models.login.AuthLoginRequest;
 import io.baxter.accounts.api.models.login.LoginResponse;
 import io.baxter.accounts.infrastructure.behavior.exceptions.InvalidLoginException;
 import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationModel;
+import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationResponseModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -28,7 +29,7 @@ public class AuthServiceHttpClientImpl implements AuthServiceHttpClient{
     }
 
     @Override
-    public Mono<Void> register(AuthServiceRegistrationModel request) {
+    public Mono<AuthServiceRegistrationResponseModel> register(AuthServiceRegistrationModel request) {
         String registerUri = "/api/auth/register";
 
         return authServiceWebClient
@@ -40,6 +41,6 @@ public class AuthServiceHttpClientImpl implements AuthServiceHttpClient{
                         clientResponse.bodyToMono(String.class)
                                 .flatMap(body -> Mono.error(new RuntimeException("Auth API error: " + body)))
                 )
-                .bodyToMono(Void.class);
+                .bodyToMono(AuthServiceRegistrationResponseModel.class);
     }
 }

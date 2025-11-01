@@ -15,6 +15,9 @@ public class AccountDataModel {
     @Id
     private Integer id;
 
+    @Column("user_id")
+    private Integer userId;
+
     @Column("email")
     private String email;
 

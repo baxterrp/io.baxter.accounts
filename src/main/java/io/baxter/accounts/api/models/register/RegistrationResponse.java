@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RegistrationResponse {
     Integer id;
+    Integer userId;
     String email;
 }
