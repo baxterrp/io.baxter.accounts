@@ -173,7 +173,8 @@ public class AccountServiceImpl implements AccountService{
 
                     return accountRepository.save(account);
                 })
-                .map(saved -> new RegistrationResponse(saved.getId(), UUID.fromString(saved.getUserId()), saved.getEmail()));
+                .map(saved -> new RegistrationResponse(
+                        saved.getId(), UUID.fromString(saved.getUserId()), saved.getEmail()));
     }
 }
 

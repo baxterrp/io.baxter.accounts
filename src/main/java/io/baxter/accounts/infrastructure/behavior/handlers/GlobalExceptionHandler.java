@@ -1,7 +1,5 @@
 package io.baxter.accounts.infrastructure.behavior.handlers;
 
-import io.baxter.accounts.infrastructure.behavior.exceptions.InvalidLoginException;
-import io.baxter.accounts.infrastructure.behavior.exceptions.ResourceExistsException;
 import io.baxter.accounts.infrastructure.behavior.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,22 +15,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(InvalidLoginException.class)
-    public Mono<ResponseEntity<ErrorResponse>> handleInvalidLoginException(InvalidLoginException exception)
-    {
-        return Mono.just(ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(ErrorResponse.create(exception, HttpStatus.UNAUTHORIZED, exception.getMessage())));
-    }
-
-    @ExceptionHandler(ResourceExistsException.class)
-    public Mono<ResponseEntity<ErrorResponse>> handleResourceExistsException(ResourceExistsException exception)
-    {
-        return Mono.just(ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(ErrorResponse.create(exception, HttpStatus.CONFLICT, exception.getMessage())));
-    }
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public Mono<ResponseEntity<ErrorResponse>> handleUserNotFound(ResourceNotFoundException exception) {
         return Mono.just(ResponseEntity

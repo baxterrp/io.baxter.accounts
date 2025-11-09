@@ -22,7 +22,7 @@ public class AccountController {
     @PostMapping("/register")
     public Mono<ResponseEntity<RegistrationResponse>> register(@Valid @RequestBody RegistrationRequest request){
         return accountService.register(request)
-                .map(account -> ResponseEntity.created(URI.create("/login")).body(account));
+                .map(account -> ResponseEntity.created(URI.create("/" + account.getId())).body(account));
     }
 
     @GetMapping("{id}")

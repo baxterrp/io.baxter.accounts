@@ -1,19 +1,15 @@
 package io.baxter.accounts.infrastructure.auth;
 
-import io.baxter.accounts.infrastructure.constants.Roles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import reactor.core.publisher.Mono;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -37,6 +33,12 @@ public class AsyncSecurityConfiguration {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex
+                        .pathMatchers(
+                                "/api/auth/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/webjars/**").permitAll()
                         .pathMatchers(HttpMethod.POST, accountsUri).permitAll()
                         .pathMatchers(HttpMethod.GET, accountsUri).hasAuthority(userScope)
                         .pathMatchers(HttpMethod.PATCH, accountsUri).hasAuthority(userScope)

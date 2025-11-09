@@ -26,6 +26,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
+    // swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.7.0")
+
     // Reactive database stack
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("io.asyncer:r2dbc-mysql:1.3.0")
