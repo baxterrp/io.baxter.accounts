@@ -1,8 +1,6 @@
 package io.baxter.accounts.api.controllers;
 
 import io.baxter.accounts.api.models.*;
-import io.baxter.accounts.api.models.login.LoginRequest;
-import io.baxter.accounts.api.models.login.LoginResponse;
 import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.api.services.AccountService;
@@ -20,11 +18,6 @@ import java.net.URI;
 public class AccountController {
 
     private final AccountService accountService;
-
-    @PostMapping("/login")
-    public Mono<ResponseEntity<LoginResponse>> login(@Valid @RequestBody LoginRequest request){
-        return accountService.login(request).map(ResponseEntity::ok);
-    }
 
     @PostMapping("/register")
     public Mono<ResponseEntity<RegistrationResponse>> register(@Valid @RequestBody RegistrationRequest request){

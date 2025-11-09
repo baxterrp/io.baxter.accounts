@@ -8,7 +8,7 @@ plugins {
 
 group = "io.baxter"
 version = "0.0.1-SNAPSHOT"
-description = "Authentication Service"
+description = "Account Service"
 
 repositories {
 	mavenCentral()
@@ -24,11 +24,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("io.projectreactor:reactor-core:3.5.10")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     // Reactive database stack
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    implementation("io.asyncer:r2dbc-mysql:1.1.0")
+    implementation("io.asyncer:r2dbc-mysql:1.3.0")
 
     // JWT support
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
@@ -41,5 +41,5 @@ dependencies {
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
-    mainClass.set("io.baxter.authentication.Application")
+    mainClass.set("io.baxter.accounts.Application")
 }

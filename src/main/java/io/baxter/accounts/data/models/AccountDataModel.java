@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.UUID;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +18,7 @@ public class AccountDataModel {
     private Integer id;
 
     @Column("user_id")
-    private Integer userId;
+    private String userId;
 
     @Column("email")
     private String email;

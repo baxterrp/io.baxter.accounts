@@ -10,10 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistrationRequest {
+    UUID userId;
+
     @Email(message = "invalid email format")
     @Size(max = 100, message = "email cannot exceed 100 characters")
     @NotEmpty(message = "email is required")

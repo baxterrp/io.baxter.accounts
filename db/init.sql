@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `phone_numbers` (
 
 CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
+  `user_id` CHAR(36) NOT NULL,
   `email` VARCHAR(100) NOT NULL,
   `address_id` int NULL,
   `phone_id` INT NULL,

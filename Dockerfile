@@ -1,11 +1,11 @@
 # Stage 1: Build the application
-FROM gradle:8.10-jdk21 AS build
+FROM gradle:8.7-jdk21 AS build
 WORKDIR /app
 COPY . .
 RUN gradle clean bootJar --no-daemon
 
 # Stage 2: Runtime
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
 # Copy the JAR built in Stage 1

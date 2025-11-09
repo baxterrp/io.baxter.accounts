@@ -1,30 +1,20 @@
 package io.baxter.accounts.api.services;
 
 import io.baxter.accounts.api.models.*;
-import io.baxter.accounts.api.models.login.AuthLoginRequest;
-import io.baxter.accounts.api.models.login.LoginRequest;
-import io.baxter.accounts.api.models.login.LoginResponse;
 import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.data.models.*;
 import io.baxter.accounts.data.repository.*;
-import io.baxter.accounts.infrastructure.behavior.exceptions.InvalidLoginException;
 import io.baxter.accounts.infrastructure.behavior.exceptions.ResourceNotFoundException;
-import io.baxter.accounts.infrastructure.constants.Roles;
-import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationModel;
-import io.baxter.accounts.infrastructure.http.models.AuthServiceRegistrationResponseModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService{
-
-    private final AuthServiceHttpClient authServiceHttpClient;
     private final AccountRepository accountRepository;
     private final AddressRepository addressRepository;
     private final PhoneNumberRepository phoneNumberRepository;
@@ -87,7 +77,7 @@ public class AccountServiceImpl implements AccountService{
 
                                 return accountRepository.save(updatedAccount);
                             })
-                            .flatMap(saved -> getAccountById(id));
+                            .flatMap(saved -> getAccountById(saved.getId()));
                 });
     }
 
@@ -120,7 +110,7 @@ public class AccountServiceImpl implements AccountService{
                     return Mono.zip(phone, address).map(tuple ->
                             new AccountModel(
                                accountDataModel.getId(),
-                               accountDataModel.getUserId(),
+                               UUID.fromString(accountDataModel.getUserId()),
                                accountDataModel.getEmail(),
                                tuple.getT1().orElse(null),
                                tuple.getT2().orElse(null)
@@ -129,21 +119,7 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Mono<LoginResponse> login(LoginRequest loginRequest) {
-        return accountRepository.findByEmail(loginRequest.getEmail())
-            .switchIfEmpty(Mono.error(InvalidLoginException::new))
-            .flatMap(account -> authServiceHttpClient.login(new AuthLoginRequest(account.getEmail(), loginRequest.getPassword())));
-    }
-
-    @Override
     public Mono<RegistrationResponse> register(RegistrationRequest registrationRequest) {
-        // build DTO's
-        AuthServiceRegistrationModel authRequest = new AuthServiceRegistrationModel(
-                registrationRequest.getEmail(),
-                registrationRequest.getPassword(),
-                List.of(Roles.ROLE_USER)
-        );
-
         AddressModel address = registrationRequest.getAddress();
         AddressDataModel addressRequest = address != null ? new AddressDataModel(
                 null,
@@ -162,15 +138,15 @@ public class AccountServiceImpl implements AccountService{
         ) : null;
 
         // register with auth service and then persist account data
-        return authServiceHttpClient.register(authRequest)
-                .flatMap(authResponse -> saveAccountWithAddressAndPhone(
-                        addressRequest, phoneRequest, authResponse));
+        return saveAccountWithAddressAndPhone(
+                addressRequest, phoneRequest, registrationRequest.getEmail(), registrationRequest.getUserId());
     }
 
     private Mono<RegistrationResponse> saveAccountWithAddressAndPhone(
             AddressDataModel addressRequest,
             PhoneNumberDataModel phoneRequest,
-            AuthServiceRegistrationResponseModel authResponse
+            String email,
+            UUID userId
     ) {
         Mono<Optional<AddressDataModel>> addressMono =
                 addressRequest != null
@@ -189,15 +165,15 @@ public class AccountServiceImpl implements AccountService{
 
                     AccountDataModel account = new AccountDataModel(
                             null,
-                            authResponse.getId(),
-                            authResponse.getName(),
+                            userId.toString(),
+                            email,
                             phone.map(PhoneNumberDataModel::getId).orElse(null),
                             address.map(AddressDataModel::getId).orElse(null)
                     );
 
                     return accountRepository.save(account);
                 })
-                .map(saved -> new RegistrationResponse(saved.getId(), saved.getUserId(), saved.getEmail()));
+                .map(saved -> new RegistrationResponse(saved.getId(), UUID.fromString(saved.getUserId()), saved.getEmail()));
     }
 }
 
