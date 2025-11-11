@@ -8,7 +8,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "io.baxter"
+group = "io.baxter.accounts"
 version = "0.0.1-SNAPSHOT"
 description = "Account Service"
 
