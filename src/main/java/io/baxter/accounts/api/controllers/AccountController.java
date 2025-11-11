@@ -1,6 +1,7 @@
 package io.baxter.accounts.api.controllers;
 
 import io.baxter.accounts.api.models.*;
+import io.baxter.accounts.api.models.*;
 import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.api.services.AccountService;

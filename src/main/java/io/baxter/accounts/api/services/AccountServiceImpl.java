@@ -1,6 +1,7 @@
 package io.baxter.accounts.api.services;
 
 import io.baxter.accounts.api.models.*;
+import io.baxter.accounts.api.models.*;
 import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.data.models.*;
@@ -21,7 +22,6 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Mono<AccountModel> updateAccount(UpdateAccountRequest updateAccountRequest, Integer id) {
-
         return accountRepository.findById(id)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("account", id.toString())))
                 .flatMap(foundAccount -> {
