@@ -3,6 +3,7 @@ import org.gradle.kotlin.dsl.implementation
 plugins {
 	java
     jacoco
+    id("org.sonarqube") version "5.1.0.4882"
 	id("org.springframework.boot") version "3.5.6"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -52,6 +53,22 @@ dependencies {
 
 jacoco {
     toolVersion = "0.8.13"
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "baxterrp_io-baxter-accounts")
+        property("sonar.organization", "baxterrp")
+        property("sonar.host.url", "https://sonarcloud.io")
+
+        property("sonar.sources", "src/main/java")
+        property("sonar.tests", "src/test/java")
+        property("sonar.language", "java")
+        property("sonar.java.binaries", "build/classes/java")
+        property("sonar.java.coveragePlugin", "jacoco")
+        property("sonar.junit.reportPaths", "build/test-results/test")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+    }
 }
 
 tasks.jacocoTestReport {
