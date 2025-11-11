@@ -5,6 +5,9 @@ The service provides endpoints for account registration and management, with **J
 
 ---
 
+## ✅ Code Coverage
+[![codecov](https://codecov.io/github/baxterrp/io.baxter.accounts/branch/main/graph/badge.svg?token=7W4PYZOXFH)](https://codecov.io/github/baxterrp/io.baxter.accounts)
+
 ## 📘 API Specification
 You can view the full OpenAPI specification here:  
 👉 [openapi.json](https://github.com/baxterrp/io.baxter.accounts/blob/main/openapi.json)
