@@ -61,6 +61,7 @@ sonarqube {
         property("sonar.organization", "baxterrp")
         property("sonar.host.url", "https://sonarcloud.io")
 
+        property("sonar.projectName", "io.baxter.accounts")
         property("sonar.sources", "src/main/java")
         property("sonar.tests", "src/test/java")
         property("sonar.language", "java")
