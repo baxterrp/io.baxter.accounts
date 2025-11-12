@@ -6,7 +6,7 @@ import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.data.models.*;
 import io.baxter.accounts.data.repository.*;
-import io.baxter.accounts.infrastructure.behavior.exceptions.ResourceNotFoundException;
+import io.baxter.accounts.infrastructure.behavior.exceptions.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -120,26 +120,33 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Mono<RegistrationResponse> register(RegistrationRequest registrationRequest) {
-        AddressModel address = registrationRequest.getAddress();
-        AddressDataModel addressRequest = address != null ? new AddressDataModel(
-                null,
-                address.getStreet(),
-                address.getCity(),
-                address.getState(),
-                address.getZip(),
-                address.getCountry()
-        ) : null;
+        return accountRepository.existsByEmail(registrationRequest.getEmail())
+                .flatMap(exists -> {
+                    if (exists){
+                        return Mono.error(new ResourceExistsException("account", registrationRequest.getEmail()));
+                    }
 
-        PhoneModel phone = registrationRequest.getPhone();
-        PhoneNumberDataModel phoneRequest = phone != null ? new PhoneNumberDataModel(
-                null,
-                phone.getNumber(),
-                phone.getCountrycode()
-        ) : null;
+                    AddressModel address = registrationRequest.getAddress();
+                    AddressDataModel addressRequest = address != null ? new AddressDataModel(
+                            null,
+                            address.getStreet(),
+                            address.getCity(),
+                            address.getState(),
+                            address.getZip(),
+                            address.getCountry()
+                    ) : null;
 
-        // register with auth service and then persist account data
-        return saveAccountWithAddressAndPhone(
-                addressRequest, phoneRequest, registrationRequest.getEmail(), registrationRequest.getUserId());
+                    PhoneModel phone = registrationRequest.getPhone();
+                    PhoneNumberDataModel phoneRequest = phone != null ? new PhoneNumberDataModel(
+                            null,
+                            phone.getNumber(),
+                            phone.getCountrycode()
+                    ) : null;
+
+                    // register with auth service and then persist account data
+                    return saveAccountWithAddressAndPhone(
+                            addressRequest, phoneRequest, registrationRequest.getEmail(), registrationRequest.getUserId());
+        });
     }
 
     private Mono<RegistrationResponse> saveAccountWithAddressAndPhone(

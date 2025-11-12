@@ -8,4 +8,5 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface AccountRepository extends ReactiveCrudRepository<AccountDataModel, Integer>{
     Mono<AccountDataModel> findByEmail(String email);
+    Mono<Boolean> existsByEmail(String email);
 }

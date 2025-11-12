@@ -1,6 +1,6 @@
 package io.baxter.accounts.infrastructure.behavior.handlers;
 
-import io.baxter.accounts.infrastructure.behavior.exceptions.ResourceNotFoundException;
+import io.baxter.accounts.infrastructure.behavior.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -15,6 +15,13 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(ResourceExistsException.class)
+    public Mono<ResponseEntity<ErrorResponse>> handleResourceExistsException(ResourceExistsException exception)
+    {
+        return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.create(exception, HttpStatus.CONFLICT, exception.getMessage())));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public Mono<ResponseEntity<ErrorResponse>> handleUserNotFound(ResourceNotFoundException exception) {
         return Mono.just(ResponseEntity
