@@ -7,6 +7,7 @@ import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.data.models.*;
 import io.baxter.accounts.data.repository.*;
 import io.baxter.accounts.infrastructure.behavior.exceptions.*;
+import io.baxter.accounts.infrastructure.messaging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -19,6 +20,7 @@ public class AccountServiceImpl implements AccountService{
     private final AccountRepository accountRepository;
     private final AddressRepository addressRepository;
     private final PhoneNumberRepository phoneNumberRepository;
+    private final AccountEventPublisher eventPublisher;
 
     @Override
     public Mono<AccountModel> updateAccount(UpdateAccountRequest updateAccountRequest, Integer id) {
@@ -145,7 +147,11 @@ public class AccountServiceImpl implements AccountService{
 
                     // register with auth service and then persist account data
                     return saveAccountWithAddressAndPhone(
-                            addressRequest, phoneRequest, registrationRequest.getEmail(), registrationRequest.getUserId());
+                            addressRequest, phoneRequest, registrationRequest.getEmail(), registrationRequest.getUserId())
+                            .doOnSuccess(response -> {
+                                var event = new AccountRegisteredEvent(response.getId(), response.getUserId(), response.getEmail());
+                                eventPublisher.publishAccountRegistered(event);
+                            });
         });
     }
 

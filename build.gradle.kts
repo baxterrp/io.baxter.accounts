@@ -17,6 +17,10 @@ repositories {
 }
 
 dependencies {
+    // kafka
+    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-json")
+
     // lombok for DI
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
