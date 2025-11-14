@@ -23,6 +23,8 @@ public class AccountControllerTest {
     final private UUID userId = UUID.fromString("fd9530d7-17dd-49fa-b187-b3d309cbbd9e");
     final private String email = "test@test.com";
     final private Integer id = 1;
+    final private String firstName = "robert";
+    final private String lastName = "baxter";
 
     @BeforeEach
     void setup(){
@@ -36,8 +38,9 @@ public class AccountControllerTest {
         final PhoneModel expectedPhone = getPhoneModel();
         final AddressModel expectedAddress = getAddressModel();
         final String password = "Pass123##";
-        final RegistrationRequest request = new RegistrationRequest(userId, email, password, expectedPhone, expectedAddress);
         final RegistrationResponse expectedResponse = new RegistrationResponse(id, userId, email);
+        final RegistrationRequest request = new RegistrationRequest(
+                userId, firstName, lastName, email, password, expectedPhone, expectedAddress);
 
         Mockito.when(mockAccountService.register(request)).thenReturn(Mono.just(expectedResponse));
 
@@ -65,10 +68,12 @@ public class AccountControllerTest {
                 id,
                 userId,
                 email,
+                firstName,
+                lastName,
                 expectedPhone,
                 expectedAddress);
 
-        final UpdateAccountRequest request = new UpdateAccountRequest(expectedPhone, expectedAddress);
+        final UpdateAccountRequest request = new UpdateAccountRequest(firstName, lastName, expectedPhone, expectedAddress);
 
         Mockito.when(mockAccountService.updateAccount(request, id)).thenReturn(Mono.just(expectedAccountModel));
 
@@ -101,6 +106,8 @@ public class AccountControllerTest {
         final AccountModel expectedAccountModel = new AccountModel(
                 id,
                 userId,
+                firstName,
+                lastName,
                 email,
                 expectedPhone,
                 expectedAddress);
