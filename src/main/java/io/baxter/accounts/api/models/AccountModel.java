@@ -11,6 +11,8 @@ public class AccountModel {
     Integer id;
     UUID userId;
     String email;
+    String firstName;
+    String lastName;
     PhoneModel phone;
     AddressModel address;
 }

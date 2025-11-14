@@ -14,12 +14,19 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
       - ${MYSQL_PORTS}
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 3s
+      timeout: 5s
+      retries: 20
 
   api:
     build: .
     container_name: accounts-api
     depends_on:
-      - db
+      db:
+          condition: service_healthy
+
     environment:
       SPRING_R2DBC_URL: ${MYSQL_URL}
       SPRING_R2DBC_USERNAME: ${MYSQL_USER}

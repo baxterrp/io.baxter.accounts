@@ -20,6 +20,12 @@ public class AccountDataModel {
     @Column("user_id")
     private String userId;
 
+    @Column("firstName")
+    private String firstName;
+
+    @Column("lastName")
+    private String lastName;
+
     @Column("email")
     private String email;
 

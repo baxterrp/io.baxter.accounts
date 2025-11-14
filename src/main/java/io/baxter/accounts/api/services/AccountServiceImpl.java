@@ -72,6 +72,8 @@ public class AccountServiceImpl implements AccountService{
                                 AccountDataModel updatedAccount = new AccountDataModel(
                                         id,
                                         foundAccount.getUserId(),
+                                        updateAccountRequest.getFirstName(),
+                                        updateAccountRequest.getLastName(),
                                         foundAccount.getEmail(),
                                         phone != null ? phone.getId() : foundAccount.getPhoneId(),
                                         address != null ? address.getId() : foundAccount.getAddressId()
@@ -114,6 +116,8 @@ public class AccountServiceImpl implements AccountService{
                                accountDataModel.getId(),
                                UUID.fromString(accountDataModel.getUserId()),
                                accountDataModel.getEmail(),
+                               accountDataModel.getFirstName(),
+                               accountDataModel.getLastName(),
                                tuple.getT1().orElse(null),
                                tuple.getT2().orElse(null)
                        ));
@@ -147,7 +151,12 @@ public class AccountServiceImpl implements AccountService{
 
                     // register with auth service and then persist account data
                     return saveAccountWithAddressAndPhone(
-                            addressRequest, phoneRequest, registrationRequest.getEmail(), registrationRequest.getUserId())
+                            addressRequest,
+                            phoneRequest,
+                            registrationRequest.getEmail(),
+                            registrationRequest.getUserId(),
+                            registrationRequest.getFirstName(),
+                            registrationRequest.getLastName())
                             .doOnSuccess(response -> {
                                 var event = new AccountRegisteredEvent(response.getId(), response.getUserId(), response.getEmail());
                                 eventPublisher.publishAccountRegistered(event);
@@ -159,7 +168,9 @@ public class AccountServiceImpl implements AccountService{
             AddressDataModel addressRequest,
             PhoneNumberDataModel phoneRequest,
             String email,
-            UUID userId
+            UUID userId,
+            String firstName,
+            String lastName
     ) {
         Mono<Optional<AddressDataModel>> addressMono =
                 addressRequest != null
@@ -179,6 +190,8 @@ public class AccountServiceImpl implements AccountService{
                     AccountDataModel account = new AccountDataModel(
                             null,
                             userId.toString(),
+                            firstName,
+                            lastName,
                             email,
                             phone.map(PhoneNumberDataModel::getId).orElse(null),
                             address.map(AddressDataModel::getId).orElse(null)

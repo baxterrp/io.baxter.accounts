@@ -18,6 +18,14 @@ import java.util.UUID;
 public class RegistrationRequest {
     UUID userId;
 
+    @NotEmpty(message = "firstName is required")
+    @Size(max = 100, message = "firstName cannot exceed 100 characters")
+    String firstName;
+
+    @NotEmpty(message = "lastName is required")
+    @Size(max = 100, message = "lastName cannot exceed 100 characters")
+    String lastName;
+
     @Email(message = "invalid email format")
     @Size(max = 100, message = "email cannot exceed 100 characters")
     @NotEmpty(message = "email is required")
