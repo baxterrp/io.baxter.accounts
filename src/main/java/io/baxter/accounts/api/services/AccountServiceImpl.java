@@ -125,7 +125,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Mono<RegistrationResponse> register(RegistrationRequest registrationRequest) {
-        return accountRepository.existsByEmail(registrationRequest.getEmail())
+        return accountRepository.existsByEmailOrUserId(registrationRequest.getEmail(), registrationRequest.getUserId().toString())
                 .flatMap(exists -> {
                     if (exists){
                         return Mono.error(new ResourceExistsException("account", registrationRequest.getEmail()));

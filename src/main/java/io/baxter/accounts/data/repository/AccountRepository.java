@@ -9,6 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface AccountRepository extends ReactiveCrudRepository<AccountDataModel, Integer>{
-    Mono<Boolean> existsByEmail(String email);
+    Mono<Boolean> existsByEmailOrUserId(String email, String userId);
     Mono<AccountDataModel> findByUserId(UUID userId);
 }
