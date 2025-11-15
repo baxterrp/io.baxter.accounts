@@ -158,7 +158,7 @@ public class AccountServiceImpl implements AccountService{
                             registrationRequest.getFirstName(),
                             registrationRequest.getLastName())
                             .doOnSuccess(response -> {
-                                var event = new AccountRegisteredEvent(response.getId(), response.getUserId(), response.getEmail());
+                                var event = new AccountRegisteredEvent(response.getUserId());
                                 eventPublisher.publishAccountRegistered(event);
                             });
         });
