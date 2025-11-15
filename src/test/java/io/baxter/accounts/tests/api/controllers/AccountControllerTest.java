@@ -112,10 +112,10 @@ public class AccountControllerTest {
                 expectedPhone,
                 expectedAddress);
 
-        Mockito.when(mockAccountService.getAccountById(id)).thenReturn(Mono.just(expectedAccountModel));
+        Mockito.when(mockAccountService.getAccountByUserId(userId)).thenReturn(Mono.just(expectedAccountModel));
 
         // Act
-        var response = accountController.getAccount(id);
+        var response = accountController.getAccount(userId);
 
         // Assert
         StepVerifier.create(response)
@@ -130,7 +130,7 @@ public class AccountControllerTest {
                 })
                 .verifyComplete();
 
-        Mockito.verify(mockAccountService).getAccountById(id);
+        Mockito.verify(mockAccountService).getAccountByUserId(userId);
         Mockito.verifyNoMoreInteractions(mockAccountService);
     }
 

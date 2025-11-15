@@ -1,7 +1,6 @@
 package io.baxter.accounts.api.services;
 
 import io.baxter.accounts.api.models.*;
-import io.baxter.accounts.api.models.*;
 import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.data.models.*;
@@ -81,13 +80,13 @@ public class AccountServiceImpl implements AccountService{
 
                                 return accountRepository.save(updatedAccount);
                             })
-                            .flatMap(saved -> getAccountById(saved.getId()));
+                            .flatMap(saved -> getAccountByUserId(UUID.fromString(saved.getUserId())));
                 });
     }
 
     @Override
-    public Mono<AccountModel> getAccountById(Integer id) {
-        return accountRepository.findById(id)
+    public Mono<AccountModel> getAccountByUserId(UUID id) {
+        return accountRepository.findByUserId(id)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("account", id.toString())))
                 .flatMap(accountDataModel -> {
                     Mono<Optional<PhoneModel>> phone = Mono.justOrEmpty(accountDataModel.getPhoneId())

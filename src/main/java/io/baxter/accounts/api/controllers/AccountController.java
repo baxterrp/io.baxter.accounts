@@ -1,7 +1,6 @@
 package io.baxter.accounts.api.controllers;
 
 import io.baxter.accounts.api.models.*;
-import io.baxter.accounts.api.models.*;
 import io.baxter.accounts.api.models.register.RegistrationRequest;
 import io.baxter.accounts.api.models.register.RegistrationResponse;
 import io.baxter.accounts.api.services.AccountService;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -27,8 +27,8 @@ public class AccountController {
     }
 
     @GetMapping("{id}")
-    public Mono<ResponseEntity<AccountModel>> getAccount(@PathVariable Integer id){
-        return accountService.getAccountById(id).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<AccountModel>> getAccount(@PathVariable UUID id){
+        return accountService.getAccountByUserId(id).map(ResponseEntity::ok);
     }
 
     @PatchMapping("{id}")
