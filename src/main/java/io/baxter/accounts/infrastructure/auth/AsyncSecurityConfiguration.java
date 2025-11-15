@@ -35,12 +35,11 @@ public class AsyncSecurityConfiguration {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex
                         .pathMatchers(
-                                "/api/auth/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/webjars/**").permitAll()
-                        .pathMatchers(HttpMethod.POST, accountsUri).permitAll()
+                        .pathMatchers(HttpMethod.POST, accountsUri).hasAuthority(userScope)
                         .pathMatchers(HttpMethod.GET, accountsUri).hasAuthority(userScope)
                         .pathMatchers(HttpMethod.PATCH, accountsUri).hasAuthority(userScope)
                         .anyExchange().authenticated()
